@@ -3,6 +3,7 @@ from string import *
 import glob
 from math import sqrt
 
+deddea
 def randomize_starting_position(clean_ligand_pdb, input_ligand, ligname, rec_file, rec_com, lig_com, output_folder=".", poses=40):
     ### Randomize ligand starting position for outside-inside
     import pymol
