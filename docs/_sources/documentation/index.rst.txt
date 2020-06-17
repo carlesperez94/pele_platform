@@ -1,8 +1,8 @@
-Input Parameters
-######################
+Input flags documentation
+###########################
 
-Compulsory flags
---------------------
+Compulsory flags PELE
+--------------------------------
 
 - **system**: Path to the input pdb file cointaining ligand and receptor in your desired initial conformation (except for a global exploration)
 
@@ -23,49 +23,69 @@ Compulsory flags
     cpus: 200
 
 
+Compulsory flags FragPele
+-----------------------------
+
+Frag PELE grows an atom onto a core in N growing steps while moving protein and ligand.
+Afterwards a final sampling simulation is run to fully explore the ligand-protein conformational space.
+
+- **frag_core**: Core of the molecule we want to add fragments to. Required parameter
+
+- **Method to use**: Choose on of the available methos. For more please refer here.
+
+- **resname**: Residue name of the frag_core ligand
+
+- **cpus**: Cpus to use. Default=48
+
+..  code-block:: yaml
+
+    frag_core: "/home/daniel/PR_core.pdb"
+    frag_input: "/home/daniel/serie_file.conf"
+    frag_core: "LIG"
+    cpus: 48
+
+
 Optative flags
--------------------
-
-Job parameters
-=================
-
-Configure the main important parameters for the job
+----------------------------
 
 
-- **iterations**: Adaptive epochs to run. Set to 1 by default if using PELE
+General settings
+====================
 
-- **steps**: Pele steps in each iteration
+Configure the settings of the simulation and the path to all dependencies in case of need (non-default installation).
 
 - **test**: Run a quick test to check the simulation works (~2 min). **Never use the control files from the test as input for a production simulation as temperature, ANM and minimization are twicked to made the simulation faster!!!!**
  
 - **usesrun**: Use srun binary to run PELE. Only when using intel processors.
 
-- **debug**: Use this flag to only create the inputs of the simulation. No simulation is run. (Usefull to transport it to another machine)
+- **pele_exec**: Use a pele executable that is not the default one. **Needs to be used with pele_data and pele_documents**. default: $PELE/bin/Pele_mpi
 
-- **pele_exec**: Use a pele executable that is not the default one. **Needs to be used with pele_data and pele_documents**
+- **pele_data**: Use a pele data folder that is not the default one. default: $PELE/Data
 
-- **pele_data**: Use a pele data folder that is not the default one.
+- **pele_documents**: Use a pele documents folder that is not the default one. default: $PELE/Documents 
 
-- **pele_documents**: Use a pele documents folder that is not the default one.
+- **pele_license**: Use a pele_license path that is not the default one. default: $PELE/licenses
 
+- **schrodinger**: Use a schrodinger path that is not the default one. default: $SCHRODINGER
 
 ..  code-block:: yaml
 
-  iterations: 30
-  steps: 12
+
   test: true
   usesrun: false
-  debug: true
   pele_exec: "/home/pele/bin/Pele_mpi"
   pele_data: "/home/pele/Data/"
   pele_documents: "/home/pele/Documents/"
+  pele_license: "/home/pele/licenses"
+  schrodinger: "/home/pele/schrodinger2020-1/"
+
 
 Receptor preparation
 =======================
 
 Configure the parameters of the PPP (Protein Pele Preparation)
 
-- **preprocess_receptor**: Skip protein pele preparation. Default: False
+- **skip_preprocess**: Skip protein pele preparation. Default: False
 
 - **noTERs**: Don't include TERs on preparation. Used if PPP gets confuse with insertion codes or other. Default: False
 
@@ -103,6 +123,8 @@ Configure the parameters of the PlopRotTemp to extract the ligand forcefield par
 
 - **rotamers**: External rotamer libraries
 
+- **skip_ligand_prep**: Skip preparation of that resiude. This could be usefull to bypass problems with PlopRotTemp when creating the ligand parameters.
+
 
 ..  code-block:: yaml
 
@@ -117,6 +139,8 @@ Configure the parameters of the PlopRotTemp to extract the ligand forcefield par
   rotamers:
     - "/home/dsoler/MG.rot.assign"
     - "/home/dsoler/LIG.rot.assign"
+  skip_ligand_prep:
+    - "LIG"
 
 Box parameters
 =================
@@ -137,8 +161,8 @@ Parameters to set the exploration Box:
     - 50
 
 
-PELE params
-================
+Simulation params
+====================
 
 - **seed**: Seed of the job for reproducibility. Default=12345
 
@@ -187,8 +211,16 @@ PELE params
 
 
 
-Adaptive params
+PELE params
 ===================
+
+**These flags are exclusive of the PELE modes not fragPELE**
+
+- **iterations**: Adaptive epochs to run. Set to 1 by default if using PELE
+
+- **steps**: Pele steps in each iteration
+
+- **debug**: Use this flag to only create the inputs of the simulation. No simulation is run. (Usefull to transport it to another machine)
 
 - **spawning**: Spawning type ([independent, inverselyProportional or epsilon so far]). Default: inverselyProportional
 
@@ -210,6 +242,9 @@ Adaptive params
 
 ..  code-block:: yaml
 
+    iterations: 30
+    steps: 12
+    debug: true
     spawning: "epsilon"
     density: "exitContinuous"
     cluster_values: [2,3,4]
@@ -220,6 +255,40 @@ Adaptive params
     working_folder: "folder_to_restart"
     report: report
     traj: trajectory.xtc
+
+FragPELE params
+===================
+
+**These flags are exclusive of the FragPele modes not PELE**
+
+- **growing_steps**: Number of steps to grow the fragment with.
+
+- **steps_in_gs**: Number of pele steps within each growing step
+
+- **sampling_steps**: Number of pele steps in the final sampling simulation
+
+- **protocol**: Type of protocol. options = [HT, ES]. For more info please refere here.
+
+
+..  code-block:: yaml
+
+    growing_steps: 6
+    steps_in_gs: 6
+    sampling_steps: 20
+    protocol: HT
+    cpus: 24
+
+PPI params
+===============
+
+**These flags are exclusive of the ppi: true mode**
+
+- n_components: Number of clusters after global exploration. In other words, number of inputs for the refinment exploration after the global simulation. Default: 10
+
+
+..  code-block:: yaml
+
+    n_components: 10
 
 
 Constraints
@@ -235,19 +304,38 @@ This section allows the user to change the constraint values.
 
 - **water_constr**: Water constraints. Default=5
 
+- **constrain_smiles**: SMILES string to indicate what part of the molecule to constraint. Default=None
+
+- **smiles_constr**: Numeric value of the SMILES constraints. Default=10
+
+- **external_constraints**: You can specify 2 types of constraints. Positional constraints or atom-atom constraint. (Example below)
+
+  - The positional constraints are given either by: 
+        - springConstant-atomnumber. i.e. "10-17"
+        - springConstant-chain:resnum:atomname. i.e. "5-A:1:H"
+
+  - The atom-atom constraints are specified either by: 
+        - springConstant-equilibriumDistance-atomnumber1-atomnumber2. i.e. "50-2.34-17-4159"
+        - springConstant-equilibriumDistance-chain1:resnum1:atomname1-chain2:resnum2:atomname2. i.e. "50-2.34-A:1:H-L:1:C21"
+
 ..  code-block:: yaml
 
     ca_constr: 2
     interval_constr: 10
     metal_constr: 100
     water_constr: 5
+    constrain_smiles: "C2CCC1CCCCC1C2"
+    smiles_constr: 5
+    external_constraints:
+    - "10-17" #constraint of 10kcal/mol at atomnumber 17
+    - "5-A:1:H" ##constraint of 10kcal/mol at atom with chain A residuenumber 1 and atomname H
+    - "50-2.34-17-4159" #constraint of 50kcal/mol with equilibrium distance of 2.34 between atomnumbers 17 & 4159
+    - "50-2.34-A:1:H-L:1:C21" #constraint of 50kcal/mol with equilibrium distance of 2.34 between atoms with respective chain resnum and atomname
 
 
 WaterPerturbation
 ======================
 
-Water modes
-+++++++++++++++++
 
     - **water_exp**: Exploration of the hydratation sites of a binding site by perturbing and clusterizing a single water. More advance features will be later implemented to discriminate between "happy" and "unhappy" waters.
 
@@ -270,7 +358,7 @@ Example water ligand:
     - M:2
 
 Simulation Parameters
-++++++++++++++++++++++++
+========================
 
 - **box_water**: Center of the box for the waters. Default: Centroid of the center of masses of all water molecules.
 
@@ -303,7 +391,9 @@ Metrics
 
 Metrics to track along the simulation
 
-- **atom_dist**: Calculate distance between two atomnumbers. Default=None
+- **atom_dist**: Calculate distance between two atomnumbers. To calculate more than one append them in column as the example below. Default=None
+
+    - The atomdist can be specified via chain:resnum:atomname i.e. A:2:CA
 
 - **rmsd_pdb**: Calculate rmsd of the ligand to a native pdb structure
 
@@ -311,10 +401,40 @@ Metrics to track along the simulation
 ..  code-block:: yaml
 
     atom_dist:
-        - 40
-        - 1960
+        # Distance between the A:2:CA and B:3:CG also between A:5:N and B:3:CG. Append more if desired.
+        - "A:2:CA"
+        - "B:3:CG"
+        - "A:5:N"
+        - "B:3:CG"
     rmsd_pdb: "/home/dsoler/native.pdb"
 
+
+Analysis
+=============
+
+Run a post simulation analysis to extract plots, top poses and clusters.
+
+- **only_analysis**: Analyse PELE simulation without running it.
+
+- **analysis_nclust**: Numbers of clusters out of the simulation. Default: 10
+
+- **be_column**: Column of the binding energy in the reports starting by 1. Default: 5
+
+- **te_column**: Column of the total energy in the reports starting by 1. Default: 4
+
+- **limit_column**: Specify the column where your external metrics start. Default: 6
+
+- **mae**: To extract the best energy and cluster poses as .mae files with the metrics as properties (schrodinger need it). Default: false
+
+- **analysis**: Whether to run or not the analysis at the end of the simulation. Default: true
+
+..  code-block:: yaml
+
+    only_analysis: true
+    be_column: 5
+    te_column: 4
+    limit_column: 6
+    mae: true
 
 Output
 ==========
@@ -329,81 +449,3 @@ Configure the output
 
     working_folder: "NOR_solvent_OBC"
     output: "output_sim"
-
-
-Automatic Modes
---------------------
-
-Automatically configures all control file options to a standard job chosen beween
-induce fit, local exploration, bias exploration, exit path and global exploration
-
-
-Induced fit
-==============
-
-- **induced_fit**: Run induced fit simulation paramaters by setting the center of the box in the
-  cm of the ligand, a box radius of 10A, small rotations and translations and a high number of 
-  steric clashes and sidechain predition frequency. Usefull to refine docking poses, and search
-  new conformations within the same binding site.
-
-..  code-block:: yaml
-
-  induced_fit: true
-
-Rescoring
-============
-
-Simulation to refine around an initial conformation. Not looking to find a new binding mode but to minimize
-the actual one.
-
-..  code-block:: yaml
-
-  rescoring: true
-
-Local Exploration
-=====================
-
-- **out_in**: Local exploration to move the ligand from the bulk to the binding site. The box center set on the 
-  center of mass of the ligand with a radius of 30A, steering 1 50% of the times, and a slight bias towards binding energies.
-  Useful when no docking is possible in the binding site and you need to open up the pocket.
-
-..  code-block:: yaml
-
-  out_in: true
-
-Biased
-=========
-
-- **bias**: Bias exploration towards the indicated bias column. The box center is set on the center of mass of the ligand with
-  a radius of 30A, and a bias towards the chosen metric is set. An epsilon fraction of processors are distributed proportionally to the value of a metric, and the rest are inverselyProportional distributed. Therefore, the **epsilon** value controls fraction of the processors that will be assigned according to the selected metric in **biascolumn**
-
-
-..  code-block:: yaml
-
-  bias: true
-  epsilon: 0.5
-  bias_column: 5 (starting by 1 on the reports)
-
-Exit path
-==============
-
-- **in_out**: Explore the dissociative path of a molecule. At each step the box is center on the most exterior cluster
-  and there is a bias towards higher values of SASA. This type accepts a **exit_metric** which represents a column in the report file, an **exit_value** which represents a value for the metric and a **exit_condition** parameter which can be either “<” or “>”, default value is “<”. The simulation will terminate after the metric written in the metricCol reaches a value smaller or greater than exitValue, depending on the condition specified. An example of the exit condition block that would terminate the program after 4 trajectories reaches a value of more than 0.9 for the sixth column (6th starting to count from 1) of the report file would look like:
-
-
-..  code-block:: yaml
-
-  in_out: true
-  exit_value: 0.9
-  exit_condition: ">"
-  exit_trajnum: 4
-
-Global exploration
-=====================
-
-- **global**: Configure a global exploration by randomizing the ligand all around the protein. Then the simulation will start from all configurationsof the system at the same time. The number of configurations (ligand-protein systems) can be chosen thorugh the **poses** flag.
-
-..  code-block:: yaml
-
-  global: true
-  poses: 40

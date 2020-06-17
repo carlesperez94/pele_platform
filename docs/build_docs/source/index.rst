@@ -6,43 +6,46 @@
 Pele Platform
 ===========================================
 
-Pele platform is a python module to automatically
-launch PELE and AdaptivePELE. We will support  MSMPELE and FragPELE in next releases. 
-It is built as a python layer on top of all PELE functionalities that can be used as
-a backend for a potential future GUI.
+Pele platform is a suit of packages that enables users to find novel
+drug discovery solutions in matter of hours. It is based on an optimized
+multi-CPU MonteCarlo simulation called PELE. For more about the base-code 
+please refer to `here <https://eapm-bsc.github.io/PELE-repo/>`_.
+
+Included packages:
+
+    - `Docking Refinement <packages/docking/index.html>`_ (1-2h)
+    - `Pocket Exploration <packages/pocket_exploration/index.html>`_ (24h)
+    - `HT-Fragment Growing <packages/frag/index.html>`_ (30min/fragment)
+    - `Binding Events <packages/binding/index.html>`_ (6h)
+    - `Biased Simulation <packages/bias/index.html>`_ (3h)
+
 
 Github : https://github.com/NostrumBioDiscovery/pele_platform
 
 Requirements
 ===================
 
-- Academic Schordinger
-
-- Pymol Python
-
-  .. code-block:: bash
-
-    yum install gcc gcc-c++ kernel-devel python-devel tkinter python-pmw glew-devel freeglut-devel libpng-devel freetype-devel libxml2-devel glm-devel
-
-    git clone https://github.com/schrodinger/pymol-open-source.git
-
-    cd pymol-open-source
-
-    python setup.py install (with same python you will use later)
+- Academic Schordinger (any version)
 
 
-Documentation
-===================
 
 .. toctree::
    installation/index.rst
+   :hidden:
 
 .. toctree::
-   cheatsheet/index.rst
+   packages/index.rst
+   :hidden:
 
 .. toctree::
    documentation/index.rst
+   :hidden:
+
+.. toctree::
+   developers/index.rst
+   :hidden:
 
 .. toctree::
    changelog/index.rst
+   :hidden:
 

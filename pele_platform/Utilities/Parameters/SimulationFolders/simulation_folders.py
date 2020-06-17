@@ -16,17 +16,14 @@ class SimulationPaths(msm_folders.MSMPaths, glide_folders.GlidePaths):
         self.solvent_paths(args)
         self.box_paths(args)
 
-        if self.software == "msm":
-            msm_folders.MSMPaths.__init__(self, args)
-        elif self.software == "glide":
-            glide_folders.GlidePaths.__init__(self, args)
-
 
     def working_folder_paths(self, args):
-
-        self.system_fix = os.path.join(self.pele_dir, "{}_processed.pdb".format(os.path.splitext(os.path.basename(self.system))[0]))
-
+        if self.no_ppp:
+            self.system_fix = os.path.join(self.pele_dir, os.path.basename(self.system))
+        else:
+            self.system_fix = os.path.join(self.pele_dir, "{}_processed.pdb".format(os.path.splitext(os.path.basename(self.system))[0]))
         self.adap_ex_input = os.path.basename(self.system_fix)
+
         self.pele_temp = os.path.join(self.pele_dir, "pele.conf")
         self.adap_l_input = "{}/initial_*"
         self.adap_l_output = os.path.join(self.pele_dir, "output_pele")
@@ -39,7 +36,7 @@ class SimulationPaths(msm_folders.MSMPaths, glide_folders.GlidePaths):
 
     def complex_paths(self, args):
         self.receptor = os.path.join(self.pele_dir, "receptor.pdb")
-        self.topology = None if self.pdb else os.path.join("output_pele", "topology.pdb")
+        self.topology = None if self.pdb else os.path.join(self.pele_dir, self.output, "topologies/topology_0.pdb")
 
     def solvent_paths(self, args):
         self.obc_tmp = os.path.join(cs.DIR, "Templates/solventParamsHCTOBC.txt")
