@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Input Parameters &mdash; pele platform 1.1.0 documentation</title>
+  <title>Input Parameters &mdash; pele platform 1.2.3 documentation</title>
   
 
   
@@ -60,7 +60,7 @@
             
             
               <div class="version">
-                1.2
+                1.2.3
               </div>
             
           
@@ -101,13 +101,18 @@
 <li class="toctree-l3"><a class="reference internal" href="#pele-params">PELE params</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#adaptive-params">Adaptive params</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#constraints">Constraints</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#waterperturbation">WaterPerturbation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#waterperturbation">WaterPerturbation</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#water-modes">Water modes</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#simulation-parameters">Simulation Parameters</a></li>
+</ul>
+</li>
 <li class="toctree-l3"><a class="reference internal" href="#metrics">Metrics</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#output">Output</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#automatic-modes">Automatic Modes</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#induced-fit">Induced fit</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#rescoring">Rescoring</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#local-exploration">Local Exploration</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#biased">Biased</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#exit-path">Exit path</a></li>
@@ -211,12 +216,18 @@
 <li><p><strong>test</strong>: Run a quick test to check the simulation works (~2 min). <strong>Never use the control files from the test as input for a production simulation as temperature, ANM and minimization are twicked to made the simulation faster!!!!</strong></p></li>
 <li><p><strong>usesrun</strong>: Use srun binary to run PELE. Only when using intel processors.</p></li>
 <li><p><strong>debug</strong>: Use this flag to only create the inputs of the simulation. No simulation is run. (Usefull to transport it to another machine)</p></li>
+<li><p><strong>pele_exec</strong>: Use a pele executable that is not the default one. <strong>Needs to be used with pele_data and pele_documents</strong></p></li>
+<li><p><strong>pele_data</strong>: Use a pele data folder that is not the default one.</p></li>
+<li><p><strong>pele_documents</strong>: Use a pele documents folder that is not the default one.</p></li>
 </ul>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">iterations</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">30</span>
 <span class="nt">steps</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">12</span>
 <span class="nt">test</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">true</span>
 <span class="nt">usesrun</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">false</span>
 <span class="nt">debug</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="nt">pele_exec</span><span class="p">:</span> <span class="s">&quot;/home/pele/bin/Pele_mpi&quot;</span>
+<span class="nt">pele_data</span><span class="p">:</span> <span class="s">&quot;/home/pele/Data/&quot;</span>
+<span class="nt">pele_documents</span><span class="p">:</span> <span class="s">&quot;/home/pele/Documents/&quot;</span>
 </pre></div>
 </div>
 </div>
@@ -285,7 +296,10 @@
 <ul class="simple">
 <li><p><strong>seed</strong>: Seed of the job for reproducibility. Default=12345</p></li>
 <li><p><strong>log</strong>: Retrieve PELE logfiles during simulation. Default=False</p></li>
+<li><p><strong>verbose</strong>: Set to true to activate verbose mode in PELE. DEfault=False</p></li>
 <li><p><strong>anm_freq</strong>: Every how many steps to perform anm. Default=4</p></li>
+<li><p><strong>anm_displacement</strong>: Angstrom to displace carbon alphas in each ANM movement. Default=0.75</p></li>
+<li><p><strong>anm_modes_change</strong>: Number of steps before we change to a new normal mode movement. Default=4</p></li>
 <li><p><strong>sidechain_freq</strong>: Every how many steps to perform sidechain sampling. Default=2</p></li>
 <li><p><strong>min_freq</strong>: Every how many steps to perform minimization. Default=1</p></li>
 <li><p><strong>water_freq</strong>: Every how many steps to perform water perturbation. Default=1</p></li>
@@ -297,7 +311,10 @@
 </ul>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">seed</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">312312</span>
 <span class="nt">log</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="nt">verbose</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">true</span>
 <span class="nt">anm_freq</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">4</span>
+<span class="nt">anm_displacement</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">0.5</span>
+<span class="nt">anm_modes_change</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">3</span>
 <span class="nt">sidechain_freq</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">2</span>
 <span class="nt">min_freq</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">1</span>
 <span class="nt">water_freq</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">1</span>
@@ -353,34 +370,36 @@
 </div>
 <div class="section" id="waterperturbation">
 <h3>WaterPerturbation<a class="headerlink" href="#waterperturbation" title="Permalink to this headline">¶</a></h3>
-<ul>
-<li><p>Water modes:</p>
+<div class="section" id="water-modes">
+<h4>Water modes<a class="headerlink" href="#water-modes" title="Permalink to this headline">¶</a></h4>
 <blockquote>
 <div><ul class="simple">
 <li><p><strong>water_exp</strong>: Exploration of the hydratation sites of a binding site by perturbing and clusterizing a single water. More advance features will be later implemented to discriminate between “happy” and “unhappy” waters.</p></li>
 <li><p><strong>water_lig</strong>: Perturb one or several water molecules while exploring the conformational space of the ligand.</p></li>
 </ul>
 </div></blockquote>
-</li>
-</ul>
 <p>Example water exploration:</p>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">residue</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">HOH</span>
-<span class="nt">water_exp</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">true</span>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">water_exp</span><span class="p">:</span>
+  <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">M:1</span>
+  <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">M:2</span>
 </pre></div>
 </div>
 <p>Example water ligand:</p>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">residue</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">LIG</span>
-<span class="nt">water_exp</span><span class="p">:</span>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">water_lig</span><span class="p">:</span>
 <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">M:1</span>
 <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">M:2</span>
 </pre></div>
 </div>
+</div>
+<div class="section" id="simulation-parameters">
+<h4>Simulation Parameters<a class="headerlink" href="#simulation-parameters" title="Permalink to this headline">¶</a></h4>
 <ul class="simple">
-<li><p><strong>box_water</strong>: Center of the box for the waters</p></li>
-<li><p><strong>water_radius</strong>: Radius of the water box</p></li>
-<li><p><strong>water_trials</strong>: Numerical trials on water perturbation</p></li>
-<li><p><strong>water_constr</strong>: COM constraint applied to th water molecule after perturbation</p></li>
-<li><p><strong>water_temp</strong>: Temperature of the water perturbation step</p></li>
+<li><p><strong>box_water</strong>: Center of the box for the waters. Default: Centroid of the center of masses of all water molecules.</p></li>
+<li><p><strong>water_radius</strong>: Radius of the water box. Default=7</p></li>
+<li><p><strong>water_trials</strong>: Numerical trials on water perturbation. Default=10000</p></li>
+<li><p><strong>water_constr</strong>: COM constraint applied to th water molecule after perturbation. Default=0</p></li>
+<li><p><strong>water_temp</strong>: Temperature of the water perturbation step. Default=5000</p></li>
+<li><p><strong>water_overlap</strong>: Overlap factor of water. Default=0.78</p></li>
 </ul>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">box_water</span><span class="p">:</span>
 <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">20</span>
@@ -389,8 +408,10 @@
 <span class="nt">water_radius</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">8</span>
 <span class="nt">water_trials</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">500</span>
 <span class="nt">water_constr</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">0.5</span>
-<span class="nt">water_tamp</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">2000</span>
+<span class="nt">water_temp</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">2000</span>
+<span class="nt">water_overlap</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">0.5</span>
 </pre></div>
+</div>
 </div>
 </div>
 <div class="section" id="metrics">
@@ -433,6 +454,14 @@ steric clashes and sidechain predition frequency. Usefull to refine docking pose
 new conformations within the same binding site.</p></li>
 </ul>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">induced_fit</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">true</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="rescoring">
+<h3>Rescoring<a class="headerlink" href="#rescoring" title="Permalink to this headline">¶</a></h3>
+<p>Simulation to refine around an initial conformation. Not looking to find a new binding mode but to minimize
+the actual one.</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">rescoring</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">true</span>
 </pre></div>
 </div>
 </div>
