@@ -117,11 +117,17 @@ def retrieve_atom_info(atom, pdb):
     with open(pdb, "r") as f:
         for line in f:
             try:
-                if line[6:11].strip() == str(atom):
-                    chain = line[21].strip() 
-                    resnum = line[22:26].strip()
-                    atomname = line[12:16]
-                    return chain + ":" + resnum + ":" + atomname.replace(" ", "_")
+                if not isinstance(atom, int):
+                    chain, resnum, atomname = atom.split(":")
+                    if line[21].strip() == chain and line[22:26].strip() == resnum and line[12:16].strip() == atomname:
+                        atomname = line[12:16]
+                        return chain + ":" + resnum + ":" + atomname.replace(" ", "_")
+                else:
+                    if line[6:11].strip() == str(atom):
+                        chain = line[21].strip() 
+                        resnum = line[22:26].strip()
+                        atomname = line[12:16]
+                        return chain + ":" + resnum + ":" + atomname.replace(" ", "_")
             except IndexError:
                 pass
         sys.exit("Check the atoms given to calculate the distance metric")
@@ -142,3 +148,7 @@ def find_centroid(points):
     n_points = len(points)
     centroid = (sum(x) / n_points, sum(y) / n_points, sum(z) / n_points)
     return centroid
+
+def retrieve_all_waters(pdb):
+    with open(pdb, 'r') as f:
+        return list(set(["{}:{}".format(line[21:22], line[23:26].strip()) for line in f if line and "HOH" in line]))

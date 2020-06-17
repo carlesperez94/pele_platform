@@ -36,11 +36,17 @@ Configure the main important parameters for the job
 
 - **steps**: Pele steps in each iteration
 
-- **test**: Run a quick test to check the simulation works (~2 min)
+- **test**: Run a quick test to check the simulation works (~2 min). **Never use the control files from the test as input for a production simulation as temperature, ANM and minimization are twicked to made the simulation faster!!!!**
  
 - **usesrun**: Use srun binary to run PELE. Only when using intel processors.
 
 - **debug**: Use this flag to only create the inputs of the simulation. No simulation is run. (Usefull to transport it to another machine)
+
+- **pele_exec**: Use a pele executable that is not the default one. **Needs to be used with pele_data and pele_documents**
+
+- **pele_data**: Use a pele data folder that is not the default one.
+
+- **pele_documents**: Use a pele documents folder that is not the default one.
 
 
 ..  code-block:: yaml
@@ -49,6 +55,10 @@ Configure the main important parameters for the job
   steps: 12
   test: true
   usesrun: false
+  debug: true
+  pele_exec: "/home/pele/bin/Pele_mpi"
+  pele_data: "/home/pele/Data/"
+  pele_documents: "/home/pele/Documents/"
 
 Receptor preparation
 =======================
@@ -134,7 +144,13 @@ PELE params
 
 - **log**: Retrieve PELE logfiles during simulation. Default=False
 
+- **verbose**: Set to true to activate verbose mode in PELE. DEfault=False
+
 - **anm_freq**: Every how many steps to perform anm. Default=4
+
+- **anm_displacement**: Angstrom to displace carbon alphas in each ANM movement. Default=0.75
+
+- **anm_modes_change**: Number of steps before we change to a new normal mode movement. Default=4
 
 - **sidechain_freq**: Every how many steps to perform sidechain sampling. Default=2
 
@@ -156,7 +172,10 @@ PELE params
 
   seed: 312312
   log: true
+  verbose: true
   anm_freq: 4
+  anm_displacement: 0.5
+  anm_modes_change: 3
   sidechain_freq: 2
   min_freq: 1
   water_freq: 1
@@ -227,7 +246,8 @@ This section allows the user to change the constraint values.
 WaterPerturbation
 ======================
 
-- Water modes:
+Water modes
++++++++++++++++++
 
     - **water_exp**: Exploration of the hydratation sites of a binding site by perturbing and clusterizing a single water. More advance features will be later implemented to discriminate between "happy" and "unhappy" waters.
 
@@ -237,27 +257,32 @@ Example water exploration:
 
 ..  code-block:: yaml
 
-  residue: HOH
-  water_exp: true
+  water_exp:
+    - M:1
+    - M:2
 
 Example water ligand:
 
 ..  code-block:: yaml
 
-    residue: LIG
-    water_exp:
+    water_lig:
     - M:1
     - M:2
 
-- **box_water**: Center of the box for the waters
+Simulation Parameters
+++++++++++++++++++++++++
 
-- **water_radius**: Radius of the water box
+- **box_water**: Center of the box for the waters. Default: Centroid of the center of masses of all water molecules.
 
-- **water_trials**: Numerical trials on water perturbation
+- **water_radius**: Radius of the water box. Default=7
 
-- **water_constr**: COM constraint applied to th water molecule after perturbation
+- **water_trials**: Numerical trials on water perturbation. Default=10000
 
-- **water_temp**: Temperature of the water perturbation step
+- **water_constr**: COM constraint applied to th water molecule after perturbation. Default=0
+
+- **water_temp**: Temperature of the water perturbation step. Default=5000
+
+- **water_overlap**: Overlap factor of water. Default=0.78
 
 
 ..  code-block:: yaml
@@ -269,7 +294,8 @@ Example water ligand:
     water_radius: 8
     water_trials: 500
     water_constr: 0.5
-    water_tamp: 2000
+    water_temp: 2000
+    water_overlap: 0.5
 
 
 Metrics
@@ -324,6 +350,15 @@ Induced fit
 
   induced_fit: true
 
+Rescoring
+============
+
+Simulation to refine around an initial conformation. Not looking to find a new binding mode but to minimize
+the actual one.
+
+..  code-block:: yaml
+
+  rescoring: true
 
 Local Exploration
 =====================

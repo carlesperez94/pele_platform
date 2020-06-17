@@ -50,14 +50,17 @@ elif "nbdcalc" in machine:
     MMSHARE = None
     # Provisional workaround until best_struct.py is fixed
     ACCEPTED_STEPS_NAME = "numberOfAcceptedPeleSteps"
-    CRITERIA = "sasaLig"
 else:
-    SCHRODINGER = None
-    PELE = None
-    PELE_BIN = None
-    MPIRUN = None
-    LICENSE = None
+    SCHRODINGER = "/sNow/easybuild/centos/7.4.1708/Skylake/software/schrodinger2017-4/"
+    PYMOL_PYTHON = "/sNow/easybuild/centos/7.4.1708/Skylake/software/PyMOL/2.2.0_0/bin/python"
+    PELE = "/sNow/easybuild/centos/7.4.1708/Skylake/software/PELE/1.5.0.2524/"
+    PELE_BIN = "/sNow/easybuild/centos/7.4.1708/Skylake/software/PELE/1.5.0.2524-intel-2018a/bin/Pele_mpi"
+    MPIRUN = "/sNow/easybuild/centos/7.4.1708/Skylake/software/OpenMPI/2.1.2-GCC-6.4.0-2.28/bin/"
+    LICENSE = "/work/NBD_Utilities/PELE/licenses"
     MMSHARE = None
+    # Provisional workaround until best_struct.py is fixed
+    ACCEPTED_STEPS_NAME = "numberOfAcceptedPeleSteps"
+    CRITERIA = "sasaLig"
 
 
 
@@ -161,10 +164,52 @@ WATER = '''
              {{
                  "temperature": {},
                  "numberOfStericTrials": {},
+                 "overlapFactor": {},
                  "COMConstraintConstant": {}
              }}
          }}, 
 '''
+
+
+PCA = '''"preloadedModesIn" : "{}",'''
+
+
+SELECTION_TO_PERTURB = '"selectionToPerturb" : { "chains" : { "names" : [ "$CHAIN" ] } },'
+PERTURBATION = '''
+          "Perturbation": {
+                $BOX
+                "perturbationType":"naive",
+                "translationDirection": "steered",
+                "rotationAngles": "nonCoupled",
+                "parameters": {
+                    "numberOfStericTrials": $STERIC_TRIALS,
+                    "steeringUpdateFrequency": 0,
+                    "overlapFactor": $OVERLAP
+                }   
+                
+            },
+'''
+BE = '''
+                        { "type": "bindingEnergy",
+
+                           "boundPartSelection": { "chains": { "names": ["$CHAIN"] } }
+
+                        },
+'''
+
+SASA='''
+                        { "type": "sasa",
+
+                           "tag": "sasaLig",
+
+                           "selection": { "chains": { "names": ["$CHAIN"] } }
+
+                        },
+'''
+
+
+
+LIGAND = '"ligandResname" : "$LIG_RES",'
 
 
 

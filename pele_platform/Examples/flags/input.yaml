@@ -1,6 +1,6 @@
-system: '../pele_platform/Examples/Msm/PR_1A28_xray_-_minimized.pdb'
-chain: 'Z'
-resname: 'STR'
+system: '../pele_platform/Examples/water/hit1_complex_processed.pdb'
+chain: 'L'
+resname: 'LIG'
 log: true
 cpus: 3
 seed: 3000
@@ -12,10 +12,10 @@ gridres: 60
 maxtorsion: 2
 templates:
   - "data/mgz"
-  - "data/ligz"
+  - "data/strz"
 rotamers:
   - "data/MG.rot.assign"
-  - "data/LIG.rot.assign"
+  - "data/STR.rot.assign"
 box_radius: 3000
 box_center:
   - 30
@@ -55,5 +55,23 @@ atom_dist:
 - 31
 debug: true
 proximityDetection: false
+pele_exec: "done"
+pele_data: "done"
+pele_documents: "done"
+verbose: true
+water_freq: 3
+water_overlap: 3
+water_lig:
+- M:1
+pca: "modes.nmd"
+anm_direction: "steered"
+anm_mix_modes: "DontMixModes"
+anm_picking_mode: "random"
+anm_displacement: 3
+anm_modes_change: 3
+anm_num_of_modes: 3
+anm_relaxation_constr: 3
+remove_constraints: false
+
 
 
